@@ -1,26 +1,36 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Autocomplete from './component/autocomplete'
+import MapContainer from './component/google-map'
+class App extends React.Component {
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  constructor() {
+    super()
+    this.state = {
+      position: {
+        lat: 24.585445,
+        lng: 73.712479
+      }
+    }
+  }
+
+  setPosition = (lat, lng) => {
+    this.setState({
+      position: {
+        lat, lng
+      }
+    })
+  }
+
+
+  render() {
+    const { position } = this.state
+    return (
+      <React.Fragment>
+        <Autocomplete setPosition={this.setPosition} />
+        <MapContainer position={position} />
+      </React.Fragment>
+    )
+  }
 }
 
-export default App;
+export default App
