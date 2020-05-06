@@ -1,59 +1,39 @@
 import React from 'react';
-import { Map, GoogleApiWrapper, InfoWindow, Marker } from 'google-maps-react';
 
 export class MapContainer extends React.Component {
+
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            showingInfoWindow: false,
-            activeMarker: {},
-            selectedPlace: {},
-        }
+            mapIsReady: false,
+        };
     }
 
-    onMarkerClick = (props, marker, e) => {
-        this.setState({
-            selectedPlace: props,
-            activeMarker: marker,
-            showingInfoWindow: true
-        });
+    componentDidMount() {
+        window.onload = this.setState({ mapIsReady: true });
     }
 
-    onClose = props => {
-        if (this.state.showingInfoWindow) {
-            this.setState({
-                showingInfoWindow: false,
-                activeMarker: null
+    componentDidUpdate() {
+        if (this.state.mapIsReady) {
+            const google = window.google
+
+            this.map = new google.maps.Map(document.getElementById('map'), {
+                center: this.props.position,
+                zoom: 12,
+                mapTypeId: 'roadmap',
             });
+
+            new google.maps.Marker({ position: this.props.position, map: this.map });
         }
     }
 
     render() {
-        console.log(this.props)
         return (
-            <Map
-                google={this.props.google}
-                initialCenter={{
-                    lat: this.props.lat,
-                    lng: this.props.lng
-                }}
-                zoom={14}
-            >
-                <Marker onClick={this.onMarkerClick} name={'current location'} />
-                <InfoWindow
-                    marker={this.state.activeMarker}
-                    visible={this.state.showingInfoWindow}
-                    onClose={this.onClose}
-                >
-                    <div>
-                        <h4>{this.state.selectedPlace.name}</h4>
-                    </div>
-                </InfoWindow>
-            </Map>
+            <React.Fragment>
+                <div style={{ height: '400px', width: '100%' }} id="map"></div>
+            </React.Fragment>
         );
     }
 }
 
-export default GoogleApiWrapper({
-    apiKey: 'AIzaSyCmrksqTlabwQbqI9BFSUReg6XCDrhywsI'
-})(MapContainer);
+export default MapContainer
